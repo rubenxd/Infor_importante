@@ -1,0 +1,19 @@
+CREATE TABLE TablaXML (
+    Id INT,
+    ContenidoXML XML
+)
+
+INSERT INTO TablaXML (Id, ContenidoXML) VALUES (1, '<Sheet1><Production_x0020_Line>L1B4</Production_x0020_Line><Item_x0020_Number>VPJG7F-10849-BD</Item_x0020_Number><Fecha>02/20 - 02/26</Fecha><cantidad>2</cantidad></Sheet1><Sheet1><Production_x0020_Line>L1B4</Production_x0020_Line><Item_x0020_Number>VPJG7F-10849-DD</Item_x0020_Number><Fecha>02/20 - 02/26</Fecha><cantidad>1</cantidad></Sheet1>')
+
+SELECT * FROM TablaXML
+
+DECLARE @xml XML
+
+SELECT @xml = ContenidoXML FROM TablaXML
+
+SELECT  
+       Tabla.Columna.value('Production_x0020_Line[1]', 'VARCHAR(64)') AS 'Production line',
+       Tabla.Columna.value('Item_x0020_Number[1]', 'VARCHAR(64)') AS 'Item Number',
+       Tabla.Columna.value('Fecha[1]', 'VARCHAR(64)') AS 'Date',
+       Tabla.Columna.value('cantidad[1]', 'smallint') AS 'Quantity'
+FROM   @xml.nodes('//Sheet1') Tabla(Columna)
